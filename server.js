@@ -1,12 +1,14 @@
 import express from 'express';
 import mongoose from 'mongoose';
+import cors from 'cors';
 
-import userRouterV1 from './routes/api/v1/users.js';
+import employeesRouter from './routes/api/v1/employees.js';
 
 const PORT = process.env.PORT || 3000;
 
 const app = express();
 
+app.use(cors());
 app.use(express.json()) // for body on json requests
 
 const password = 'Ud4fcSCalFq52ISi'
@@ -22,8 +24,14 @@ mongoose.connect(dbURI)
 	})
 	.catch(error => console.log(error));
 
+app.all('/*', function(req, res, next) {
+	res.header("Access-Control-Allow-Origin", "*");
+	res.header("Access-Control-Allow-Headers", "X-Requested-With");
+	next();
+});
+
 app.get('/', (req, res) => {
   res.send('connected')
 });
 
-app.use('/api/v1/users', userRouterV1);
+app.use('/api/v1/employees', employeesRouter);
