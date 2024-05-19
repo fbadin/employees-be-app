@@ -1,34 +1,10 @@
 import express from "express";
+import mongoose from "mongoose";
+
 import Employee from '../../../models/employee.js';
 import { employeeAggregate } from "../../../views/employees.js";
 
 const router = express.Router();
-
-// router.get('/', async (req, res) => {
-// 	try {
-// 		// Fetch all employees from the database
-// 		const employees = await employee.find();
-
-// 		// Map employees to custom response format
-// 		const formattedEmployees = employees.map(employee => {
-// 			return {
-// 					id: employee._id, // Rename _id to id
-// 					name: employee.name,
-// 					email: employee.email,
-// 					position: employee.position,
-// 					department: employee.department,
-// 					salary: employee.salary,
-// 					start_date: employee.start_date,
-// 					created_at: employee.createdAt,
-// 					updated_at: employee.updatedAt
-// 			};
-// 	});
-
-// 	res.json({ employees: formattedEmployees });
-// 	} catch (error) {
-// 		res.status(500).json({ error_message: error.message });
-// 	}
-// });
 
 router.get('/', async (req, res) => {
   try {
@@ -86,8 +62,6 @@ router.post('/', async (req, res) => {
 	try {
 		console.log('body:', req.body);
 
-
-
 		// Extract attributes from the POST request body
 		const { name, email, position, department, salary, start_date } = req.body;
 
@@ -127,11 +101,39 @@ router.post('/', async (req, res) => {
 
 // watch for dynamic routes should be after the static routes
 
-router.get('/:id', (req, res)=>{
-	const id = req.params.id;
-	console.log('Get employee with id: ', id)
-	res.json({ employee_id: id })
-})
+router.get('/:id', async (req, res) => {
+  try {
+    const id = req.params.id;
+    console.log(`Get employee details id:`, id);
+
+		// Check if the id is a valid ObjectId
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(422).json({ error_message: `Invalid employee ID: ${id}` });
+    }
+
+    const employee = await Employee.findById(id);
+
+    if (!employee) {
+      return res.status(422).json({ error_message: `Unable to find employee with id ${id}` });
+    }
+
+    const responseData = {
+      id: employee._id,
+      name: employee.name,
+      email: employee.email,
+      position: employee.position,
+      department: employee.department,
+      salary: employee.salary,
+      start_date: employee.start_date,
+      createdAt: employee.createdAt,
+      updatedAt: employee.updatedAt
+    };
+
+    res.json(responseData);
+  } catch (error) {
+    res.status(500).json({ error_message: error.message });
+  }
+});
 
 // fetch('http://localhost:3000/employees/3', {
 // 	method: 'PUT',
