@@ -28,8 +28,6 @@ router.get('/', async (req, res) => {
       }),
     };
 
-    console.log({ searchParams });
-
     // Determine sorting order
     let sortOrder = {};
     if (sortBy === 'asc') {
@@ -43,11 +41,11 @@ router.get('/', async (req, res) => {
 			.find(searchParams)
 			.sort(sortOrder);
 
-    // Map employees to custom response format
     const formattedEmployees = employees.map((employee) => {
       return {
         id: employee._id,
         name: employee.name,
+				position: employee.position,
         department: employee.department,
       };
     });
@@ -117,17 +115,17 @@ router.get('/:id', async (req, res) => {
       return res.status(422).json({ error_message: `Unable to find employee with id ${id}` });
     }
 
-    const responseData = {
-      id: employee._id,
-      name: employee.name,
-      email: employee.email,
-      position: employee.position,
-      department: employee.department,
-      salary: employee.salary,
-      start_date: employee.start_date,
-      createdAt: employee.createdAt,
-      updatedAt: employee.updatedAt
-    };
+    const responseData = employeeAggregate(
+			employee._id,
+			employee.name,
+			employee.email,
+			employee.position,
+			employee.department,
+			employee.salary,
+			employee.start_date,
+			employee.createdAt,
+			employee.updatedAt
+		)
 
     res.json(responseData);
   } catch (error) {
@@ -141,20 +139,78 @@ router.get('/:id', async (req, res) => {
 // 	body: JSON.stringify({ x: 5 })
 // })
 
-router.put('/:id', (req, res)=>{
-	const id = req.params.id;
-	console.log('Put employee with id: ', id)
-	res.json({ employee_id: id })
+router.put('/:id', async (req, res)=>{
+	try {
+    const id = req.params.id;
+
+		// Check if the id is a valid ObjectId
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(422).json({ error_message: `Invalid employee ID: ${id}` });
+    }
+
+    const employee = await Employee.findById(id);
+
+    if (!employee) {
+      return res.status(422).json({ error_message: `Unable to find employee with id ${id}` });
+    }
+
+		// Extract attributes from the POST request body
+		const { name, email, position, department, salary, start_date } = req.body;
+
+		employee.name = name;
+		employee.email = email;
+		employee.position = position;
+		employee.department = department;
+		employee.salary = salary;
+		employee.start_date = start_date;
+
+		// Save the new employee to the database
+		const savedEmployee = await employee.save();
+
+    const responseData = employeeAggregate(
+			savedEmployee._id,
+			savedEmployee.name,
+			savedEmployee.email,
+			savedEmployee.position,
+			savedEmployee.department,
+			savedEmployee.salary,
+			savedEmployee.start_date,
+			savedEmployee.createdAt,
+			savedEmployee.updatedAt
+		)
+
+    res.json(responseData);
+  } catch (error) {
+    res.status(500).json({ error_message: error.message });
+  }
 })
 
 // fetch('http://localhost:3000/employees/3', {
 // 	method: 'DELETE',
 // })
 
-router.delete('/:id', (req, res)=>{
-	const id = req.params.id;
-	console.log('Delete employee with id: ', id)
-	res.json({ employee_id: id })
+router.delete('/:id', async (req, res)=>{
+	try {
+    const id = req.params.id;
+
+		// Check if the id is a valid ObjectId
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(422).json({ error_message: `Invalid employee ID: ${id}` });
+    }
+
+    const employee = await Employee.findById(id);
+
+    if (!employee) {
+      return res.status(422).json({ error_message: `Unable to find employee with id ${id}` });
+    }
+
+		// Save the new employee to the database
+		await employee.deleteOne();
+
+    res.json({});
+  } catch (error) {
+    res.status(500).json({ error_message: error.message });
+  }
 })
 
 export default router;

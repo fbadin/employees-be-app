@@ -6,7 +6,7 @@ export const employeeAggregate = (
 	department,
 	salary,
 	start_date,
-	create_at,
+	created_at,
 	updated_at
 ) => (
 	{
@@ -17,7 +17,7 @@ export const employeeAggregate = (
 		department,
 		salary,
 		start_date,
-		create_at,
+		created_at,
 		updated_at
 	}
 )
