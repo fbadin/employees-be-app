@@ -26,11 +26,11 @@ const employeeSchema = new Schema({
     type: String,
     required: true,
     validate: {
-      validator: (value) => {
+      validator: (value: string) => {
         // Check if the value is in ISO format
         return /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/.test(value);
       },
-      message: props => `${props.value} is not in ISO format!`
+      message: (props: { value: string }) => `${props.value} is not in ISO format!`
     }
   }
 }, {

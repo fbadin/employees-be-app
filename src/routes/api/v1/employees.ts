@@ -22,8 +22,8 @@ router.get('/', async (req, res) => {
       ...(department && { department }),
       ...(search && {
         $or: [
-          { name: new RegExp(search, 'i') },
-          { position: new RegExp(search, 'i') },
+          { name: new RegExp(search as string, 'i') },
+          { position: new RegExp(search as string, 'i') },
         ],
       }),
     };
@@ -51,15 +51,13 @@ router.get('/', async (req, res) => {
     });
 
     res.json({ employees: formattedEmployees });
-  } catch (error) {
+  } catch (error: any) {
     res.status(500).json({ error_message: error.message });
   }
 });
 
 router.post('/', async (req, res) => {
 	try {
-		console.log('body:', req.body);
-
 		// Extract attributes from the POST request body
 		const { name, email, position, department, salary, start_date } = req.body;
 
@@ -92,17 +90,14 @@ router.post('/', async (req, res) => {
 		)
 
 		res.json(responseData);
-	} catch (error) {
+	} catch (error: any) {
 		res.status(422).json({ error_message: error.message });
 	}
 });
 
-// watch for dynamic routes should be after the static routes
-
 router.get('/:id', async (req, res) => {
   try {
-    const id = req.params.id;
-    console.log(`Get employee details id:`, id);
+    const id = req.params.id as string;
 
 		// Check if the id is a valid ObjectId
     if (!mongoose.Types.ObjectId.isValid(id)) {
@@ -128,20 +123,14 @@ router.get('/:id', async (req, res) => {
 		)
 
     res.json(responseData);
-  } catch (error) {
+  } catch (error: any) {
     res.status(500).json({ error_message: error.message });
   }
 });
 
-// fetch('http://localhost:3000/employees/3', {
-// 	method: 'PUT',
-// 	headers: { 'Content-Type': 'application/json' },
-// 	body: JSON.stringify({ x: 5 })
-// })
-
 router.put('/:id', async (req, res)=>{
 	try {
-    const id = req.params.id;
+    const id = req.params.id as string;
 
 		// Check if the id is a valid ObjectId
     if (!mongoose.Types.ObjectId.isValid(id)) {
@@ -180,14 +169,10 @@ router.put('/:id', async (req, res)=>{
 		)
 
     res.json(responseData);
-  } catch (error) {
+  } catch (error: any) {
     res.status(500).json({ error_message: error.message });
   }
 })
-
-// fetch('http://localhost:3000/employees/3', {
-// 	method: 'DELETE',
-// })
 
 router.delete('/:id', async (req, res)=>{
 	try {
@@ -208,7 +193,7 @@ router.delete('/:id', async (req, res)=>{
 		await employee.deleteOne();
 
     res.json({});
-  } catch (error) {
+  } catch (error: any) {
     res.status(500).json({ error_message: error.message });
   }
 })

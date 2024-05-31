@@ -2,7 +2,7 @@ import express from 'express';
 import mongoose from 'mongoose';
 import cors from 'cors';
 
-import employeesRouter from './routes/api/v1/employees.js';
+import employeesRouter from './routes/api/v1/employees';
 
 const PORT = process.env.PORT || 3000;
 
@@ -17,8 +17,7 @@ const dbURI = `mongodb+srv://fbadin:${password}@cluster0.znezri5.mongodb.net/${d
 
 mongoose.connect(dbURI)
 	.then(response => {
-		// console.log(response)
-		console.log(`connected to ${database}`);
+		console.log(`connected to the remote database`);
 		console.log(`starting to listen on port: ${PORT}`);
 		app.listen(PORT);
 	})
