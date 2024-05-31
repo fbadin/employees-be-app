@@ -9,7 +9,7 @@ It serves as the backend for managing company employees.
 
 ## Demo
 
-[![Video Thumbnail](https://www.buddyget.net/static/img/pictures/2bd33242-370e-40c2-b2ae-8625f30dda51.png)](https://drive.google.com/file/d/19C17Y1L3P6fLAU6oyZW1Xad0PQRD4MgU/view?usp=sharing)
+[![Video Thumbnail](https://www.buddyget.net/static/img/pictures/fd2f65ed-27be-4c81-b6ea-26143d9d7858.png)](https://drive.google.com/file/d/1GlakQxQeceKqIUCNpqrRZ6ppTRGjqa74/view?usp=sharing)
 
 ---
 
